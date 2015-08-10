@@ -7,7 +7,6 @@ RUN apt-get -y update\
 
 # dependencies
 RUN apt-get -y --force-yes install vim\
- nginx\
  python-dev\
  python-flup\
  python-pip\
@@ -20,9 +19,14 @@ RUN apt-get -y --force-yes install vim\
  python-cairo\
  pkg-config
 
+# nginx
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
+RUN echo 'deb http://nginx.org/packages/ubuntu/ trusty nginx' | tee /etc/apt/sources.list.d/nginx.list
+RUN apt-get -y update && apt-get -y install nginx
+
 # nodejs
 RUN curl --silent --location https://deb.nodesource.com/setup_0.12 | bash -
-RUN apt-get install -y nodejs
+RUN apt-get -y install nodejs
 
 # python dependencies
 RUN pip install django==1.8\
@@ -45,10 +49,9 @@ RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
 ADD conf/statsd/config.js /opt/statsd/config.js
 
 # config nginx
-RUN rm /etc/nginx/sites-enabled/default
+RUN rm /etc/nginx/conf.d/*
 ADD conf/nginx/nginx.conf /etc/nginx/nginx.conf
-ADD conf/nginx/graphite.conf /etc/nginx/sites-available/graphite.conf
-RUN ln -s /etc/nginx/sites-available/graphite.conf /etc/nginx/sites-enabled/graphite.conf
+ADD conf/nginx/graphite.conf /etc/nginx/conf.d/graphite.conf
 
 # init django admin
 ADD scripts/django_admin_init.exp /usr/local/bin/django_admin_init.exp
