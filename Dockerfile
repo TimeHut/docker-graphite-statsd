@@ -18,8 +18,11 @@ RUN apt-get -y --force-yes install vim\
  libcairo2\
  libcairo2-dev\
  python-cairo\
- pkg-config\
- nodejs
+ pkg-config
+
+# nodejs
+RUN curl --silent --location https://deb.nodesource.com/setup_0.12 | bash -
+RUN apt-get install -y nodejs
 
 # python dependencies
 RUN pip install django==1.8\
